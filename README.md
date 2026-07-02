@@ -1,100 +1,101 @@
 # Full-Stack To-Do/Auth Application (Muzukuru)
 
-A highly premium and responsive task management web application built with a **FastAPI** backend (Python 3.8+) and a **React 18** (TypeScript) frontend served via **Vite**.
+A task management web app with a FastAPI backend (Python 3.8+) and a React 18 (TypeScript) frontend served via Vite.
 
-Authentication is handled securely via custom password hashing (using `bcrypt` via `passlib`) and JSON Web Tokens (`python-jose`) with client-side persistence and route guards.
-
----
+Authentication uses bcrypt password hashing (via passlib) and JWTs (via python-jose), with client-side token persistence and route guards.
 
 ## Project Structure
 
-```text
+```
 /
 ├── backend/
 │   ├── routes/
 │   │   ├── auth_routes.py       # Registration and login endpoints
-│   │   └── protected_routes.py  # Shared token verification and To-Do CRUD
-│   ├── app.log                  # API log file (requests and exception traces)
-│   ├── auth.py                  # Password hashing & JWT helper utilities
-│   ├── database.py              # SQLite configuration and SQLAlchemy models
-│   ├── logger.py                # Dual logger (console + app.log) setup
-│   ├── main.py                  # App entrypoint, CORS setup, and logging middleware
-│   ├── models.py                # Pydantic validation schemas
-│   └── requirements.txt         # Pinned backend dependencies
+│   │   └── protected_routes.py  # Token verification and To-Do CRUD
+│   ├── auth.py                  # Password hashing & JWT utilities
+│   ├── database.py              # SQLite config and SQLAlchemy models
+│   ├── logger.py                # Console + app.log logger setup
+│   ├── main.py                  # App entrypoint, CORS setup
+│   ├── models.py                # Pydantic schemas
+│   ├── requirements.txt         # Pinned backend dependencies
+│   └── .env.example             # Template for required env vars
 │
 └── frontend/
     ├── src/
-    │   ├── api/
-    │   │   └── client.ts        # Axios client with JWT request interceptor
-    │   ├── components/
-    │   │   └── Spinner.tsx      # Premium glassmorphic loading spinner
-    │   ├── context/
-    │   │   └── AuthContext.tsx  # Authentication context & localStorage token sync
-    │   ├── pages/
-    │   │   ├── Auth.css         # Styling for Register and Login pages
-    │   │   ├── Login.tsx        # Login page with controlled validation
-    │   │   ├── Register.tsx     # Register page with password validation
-    │   │   ├── Protected.css    # Styling for Dashboard and Todo items
-    │   │   └── Protected.tsx    # Protected To-Do list dashboard
-    │   ├── types/
-    │   │   └── index.ts         # Shared strict TypeScript interfaces
-    │   ├── App.tsx              # React router, route guards, and layouts
-    │   ├── index.css            # Base visual styling and scrolls
-    │   └── main.tsx             # React entrypoint
-    ├── .env                     # API base URL environment variable
-    └── vite.config.ts           # Configured to host dev server on port 3000
+    │   ├── api/client.ts         # Axios client with JWT interceptor
+    │   ├── components/Spinner.tsx
+    │   ├── context/AuthContext.tsx
+    │   ├── pages/                # Login, Register, Protected + CSS
+    │   ├── types/index.ts
+    │   ├── App.tsx
+    │   └── main.tsx
+    ├── .env.example              # Template for API base URL
+    └── vite.config.ts            # Dev server on port 3000
 ```
 
----
+## Prerequisites
 
-## Setup & Running the Application
+- Python 3.8+
+- Node.js 18+
+- npm
 
-### 1. Backend Setup (FastAPI)
+## 1. Backend Setup
 
-1. Open a terminal at the root workspace directory (`c:\Users\ssd\Documents\Projects\Muzukuru_To-Do_App`).
+From the **project root**:
 
-2. Create the backend `.env` file by copying the example template:
-   ```powershell
-   copy backend/.env.example backend/.env
-   ```
-   *(On macOS/Linux, run `cp backend/.env.example backend/.env`)*
+```bash
+cd backend
 
-3. Open `backend/.env` in your editor and set a cryptographically secure random string for `SECRET_KEY` (Security 101).
+# Create and activate a virtual environment
+python -m venv venv
 
-4. Launch the FastAPI server using the virtual environment's Uvicorn:
-   ```powershell
-   .\backend\venv\Scripts\uvicorn backend.main:app --reload --port 8000
-   ```
-   *(On macOS/Linux, run `./backend/venv/bin/uvicorn backend.main:app --reload --port 8000`)*
+# Windows
+.\venv\Scripts\Activate.ps1
+# macOS/Linux
+source venv/bin/activate
 
-   The API will now be running at [http://localhost:8000](http://localhost:8000). You can visit the health check endpoint at [http://localhost:8000/health](http://localhost:8000/health).
+# Install dependencies
+pip install -r requirements.txt
 
----
+# Create your local env file
+copy .env.example .env      # Windows
+cp .env.example .env        # macOS/Linux
+```
 
-### 2. Frontend Setup (React)
+Open `backend/.env` and set `SECRET_KEY` to a random string (e.g. `python -c "import secrets; print(secrets.token_hex(32))"`).
 
-1. Open a separate terminal and navigate to the `/frontend` folder:
-   ```powershell
-   cd frontend
-   ```
+Run the server **from the project root** (not from inside `/backend`):
 
-2. Install dependencies:
-   ```powershell
-   npm install
-   ```
+```bash
+cd ..
+uvicorn backend.main:app --reload --port 8000
+```
 
-3. Launch the Vite development server:
-   ```powershell
-   npm run dev
-   ```
-   Vite will host the frontend application at [http://localhost:3000](http://localhost:3000).
+API runs at `http://localhost:8000`. Interactive docs at `http://localhost:8000/docs`.
 
----
+## 2. Frontend Setup
 
-## Design and Features
+In a separate terminal, from the project root:
 
-- **Dark Mode Aesthetics**: Deep purple and blue radial gradients with responsive grids.
-- **Glassmorphism Form Cards**: Transparent backdrop filters and interactive glowing borders.
-- **Authentication Route Guards**: Automatically redirects unauthenticated users away from `/protected` to `/login`, and redirects logged-in users away from `/login`/`/register` back to `/protected`.
-- **JWT Header Interceptor**: Requests to the backend are auto-injected with the `Authorization: Bearer <token>` header if a token is present in the context.
-- **Dual Destination Logging**: All API requests and internal exceptions are output to both the console terminal and a persistent file at `backend/app.log`.
+```bash
+cd frontend
+cp .env.example .env   # copy the API URL template
+npm install
+npm run dev
+```
+
+App runs at `http://localhost:3000`.
+
+## Verifying It Works
+
+1. Register a new user at `/register`
+2. You should be redirected to `/protected` with a working session
+3. Refresh the page — session should persist
+4. Sign out — should redirect to `/login` and block `/protected` access
+
+## Design Notes
+
+- Dark theme, glassmorphic form cards
+- Route guards redirect unauthenticated users away from `/protected`, and authenticated users away from `/login` and `/register`
+- JWT auto-attached via Axios interceptor on all requests
+- All requests/errors logged to console and `backend/app.log`
