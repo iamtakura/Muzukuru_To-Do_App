@@ -1,0 +1,5 @@
+# Ignore local environment files
+.env
+
+# Keep the example template
+!.env.example

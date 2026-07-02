@@ -53,7 +53,15 @@ Authentication is handled securely via custom password hashing (using `bcrypt` v
 
 1. Open a terminal at the root workspace directory (`c:\Users\ssd\Documents\Projects\Muzukuru_To-Do_App`).
 
-2. Launch the FastAPI server using the virtual environment's Uvicorn:
+2. Create the backend `.env` file by copying the example template:
+   ```powershell
+   copy backend/.env.example backend/.env
+   ```
+   *(On macOS/Linux, run `cp backend/.env.example backend/.env`)*
+
+3. Open `backend/.env` in your editor and set a cryptographically secure random string for `SECRET_KEY` (Security 101).
+
+4. Launch the FastAPI server using the virtual environment's Uvicorn:
    ```powershell
    .\backend\venv\Scripts\uvicorn backend.main:app --reload --port 8000
    ```
