@@ -1,14 +1,13 @@
 import os
+from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).parent / ".env")
 
-# Configuration constants
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
     raise RuntimeError("SECRET_KEY environment variable is not set.")
